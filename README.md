@@ -30,7 +30,8 @@ platform's Django template has.
 | File | Why it exists |
 |------|---------------|
 | `Dockerfile` | FrankenPHP with the PostgreSQL, opcache and intl extensions |
-| `docker-entrypoint.sh` | Checks `APP_KEY`, caches config/routes/views, binds `PORT` |
+| `docker-entrypoint.sh` | Checks `APP_KEY`, runs a passed command, otherwise caches config/routes/views and binds `PORT` |
+| `predeploy.sh` | Runs `artisan migrate`, retrying only while Postgres is still unreachable |
 | `railway.json` | Migrations in pre-deploy, health check on `/up` |
 | Standard Laravel app | Routes, config, migrations — the usual layout |
 
@@ -45,6 +46,13 @@ Two build details worth keeping:
   locally with dev dependencies leaves a package manifest listing providers that a
   `--no-dev` install does not have, and every artisan command then dies on a
   missing class.
+- **The entrypoint executes a passed command instead of ignoring it.** Railway
+  keeps the image `ENTRYPOINT` and hands the pre-deploy command to it as
+  arguments. An entrypoint that ends in `exec frankenphp run` without looking at
+  `"$@"` throws those arguments away: the migration never runs and the pre-deploy
+  step launches a web server that has no reason to exit. `SESSION_DRIVER` and
+  `CACHE_STORE` are both `database` here, so unapplied migrations are not a
+  cosmetic problem — the first request that touches a session fails.
 
 ## Health check
 

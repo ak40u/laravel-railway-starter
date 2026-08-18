@@ -9,6 +9,15 @@ if [ -z "$APP_KEY" ]; then
   exit 1
 fi
 
+# Railway keeps the image entrypoint in place and passes the pre-deploy command
+# (and any custom start command) to it as arguments. Without this branch those
+# arguments are discarded and the web server starts instead: `php artisan migrate`
+# would report nothing and never touch the database, while the deployment waits
+# for a command that does not exit.
+if [ "$#" -gt 0 ]; then
+  exec "$@"
+fi
+
 # Caching happens here, not in the Dockerfile. `config:cache` freezes the values
 # of environment variables into a PHP file - run at build time it would bake in
 # whatever existed then, which on this platform is nothing, and your database
