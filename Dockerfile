@@ -1,7 +1,7 @@
 # FrankenPHP is the modern way to serve Laravel in one container: an application
 # server with PHP built in, so there is no nginx and php-fpm pair to configure and
 # keep in sync.
-FROM dunglas/frankenphp:1.12.6-php8.4 AS base
+FROM dunglas/frankenphp:1.12.7-php8.5 AS base
 
 RUN install-php-extensions pdo_pgsql pgsql opcache intl zip gd
 
