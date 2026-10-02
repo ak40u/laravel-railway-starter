@@ -1,6 +1,6 @@
 # Laravel starter for Railway
 
-Laravel 13 on PHP 8.5, served by FrankenPHP in a single container.
+Laravel 13 on PHP 8.4, served by FrankenPHP in a single container.
 
 ## Why this exists
 
